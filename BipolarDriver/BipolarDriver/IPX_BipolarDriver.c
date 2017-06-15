@@ -8,7 +8,13 @@
 #include "Global.h"
 #include "IPX_BipolarDriver.h"
 #include <util/delay.h>
+#include <stdlib.h>
 
+
+void set_angle(uint16 degrees, uint8 direction)
+{
+	
+}
 
 void init_bipolar_control(void)
 {
@@ -17,35 +23,96 @@ void init_bipolar_control(void)
 }
 
 
-void bipolar_drive_forward()
+void spin_to_angle()
 {
-	unsigned int STEP_DELAY_MS = 20;
-	unsigned int TURN_OFF_DELAY_Ms = 10;
-	
-	MOTOR_STEP_1;
-	_delay_ms(TURN_OFF_DELAY_Ms);
-	MOTOR_OFF;
-	_delay_ms(STEP_DELAY_MS - TURN_OFF_DELAY_Ms);
-	
-	MOTOR_STEP_2;
-	_delay_ms(TURN_OFF_DELAY_Ms);
-	MOTOR_OFF;
-	_delay_ms(STEP_DELAY_MS - TURN_OFF_DELAY_Ms);
-	
-	MOTOR_STEP_3;
-	_delay_ms(TURN_OFF_DELAY_Ms);
-	MOTOR_OFF;
-	_delay_ms(STEP_DELAY_MS - TURN_OFF_DELAY_Ms);
-	
-	MOTOR_STEP_4;
-	_delay_ms(TURN_OFF_DELAY_Ms);
-	MOTOR_OFF;
-	_delay_ms(STEP_DELAY_MS - TURN_OFF_DELAY_Ms);
+	if((abs(ANGLE - DESIRED_ANGLE) > (STEP_DEGREES / 2)) && (ANGLE < DESIRED_ANGLE))
+	{
+		bipolar_wave_drive_forward_one_step();
+		ANGLE += STEP_DEGREES;
+	}
+	if((abs(ANGLE - DESIRED_ANGLE) > (STEP_DEGREES / 2)) && (ANGLE > DESIRED_ANGLE))
+	{
+		bipolar_wave_drive_backward_one_step();
+		ANGLE -= STEP_DEGREES;
+	}
+	_delay_ms(2);
 }
 
-void bipolar_drive_forward_full_torque()
+void bipolar_wave_drive_forward_one_step()
 {
-	unsigned int STEP_DELAY_MS = 2;
+	switch(LAST_STEP)
+	{
+		case BIPOLAR_STEP_1:
+		{
+			MOTOR_STEP_2;
+			LAST_STEP = BIPOLAR_STEP_2;
+			break;
+		}
+		case BIPOLAR_STEP_2:
+		{
+			MOTOR_STEP_3;
+			LAST_STEP = BIPOLAR_STEP_3;
+			break;
+		}
+		case BIPOLAR_STEP_3:
+		{
+			MOTOR_STEP_4;
+			LAST_STEP = BIPOLAR_STEP_4;
+			break;
+		}
+		case BIPOLAR_STEP_4:
+		{
+			MOTOR_STEP_1;
+			LAST_STEP = BIPOLAR_STEP_1;
+			break;
+		}
+		default:
+		{
+			LAST_STEP = BIPOLAR_STEP_1;
+			break;
+		}
+	}
+}
+
+void bipolar_wave_drive_backward_one_step()
+{
+	switch(LAST_STEP)
+	{
+		case BIPOLAR_STEP_1:
+		{
+			MOTOR_STEP_4;
+			LAST_STEP = BIPOLAR_STEP_4;
+			break;
+		}
+		case BIPOLAR_STEP_2:
+		{
+			MOTOR_STEP_1;
+			LAST_STEP = BIPOLAR_STEP_1;
+			break;
+		}
+		case BIPOLAR_STEP_3:
+		{
+			MOTOR_STEP_2;
+			LAST_STEP = BIPOLAR_STEP_2;
+			break;
+		}
+		case BIPOLAR_STEP_4:
+		{
+			MOTOR_STEP_3;
+			LAST_STEP = BIPOLAR_STEP_3;
+			break;
+		}
+		default:
+		{
+			LAST_STEP = BIPOLAR_STEP_1;
+			break;
+		}
+	}
+}
+
+void bipolar_wave_drive_forward()
+{
+	unsigned int STEP_DELAY_MS = 250;
 	
 	MOTOR_STEP_1;
 	_delay_ms(STEP_DELAY_MS);
@@ -60,7 +127,8 @@ void bipolar_drive_forward_full_torque()
 	_delay_ms(STEP_DELAY_MS);
 }
 
-void bipolar_drive_forward_full_step()
+
+void bipolar_high_torque_full_step_drive_forward()
 {
 	unsigned int STEP_DELAY_MS = 100;
 	
@@ -68,38 +136,33 @@ void bipolar_drive_forward_full_step()
 	RESET_COIL_A_NEGATIVE;
 	RESET_COIL_B_POSITIVE;
 	SET_COIL_B_NEGATIVE;
-	_delay_ms(STEP_DELAY_MS/2);
+	_delay_ms(STEP_DELAY_MS);
 	
 	SET_COIL_A_POSITIVE;
-	SET_COIL_A_NEGATIVE;
-	RESET_COIL_B_POSITIVE;
+	RESET_COIL_A_NEGATIVE;
+	SET_COIL_B_POSITIVE;
 	RESET_COIL_B_NEGATIVE;
-	_delay_ms(STEP_DELAY_MS/2);
+	_delay_ms(STEP_DELAY_MS);
 	
 	RESET_COIL_A_POSITIVE;
 	SET_COIL_A_NEGATIVE;
 	SET_COIL_B_POSITIVE;
 	RESET_COIL_B_NEGATIVE;
-	_delay_ms(STEP_DELAY_MS/2);
+	_delay_ms(STEP_DELAY_MS);
+	
 
 	RESET_COIL_A_POSITIVE;
-	RESET_COIL_A_NEGATIVE;
-	SET_COIL_B_POSITIVE;
+	SET_COIL_A_NEGATIVE;
+	RESET_COIL_B_POSITIVE;
 	SET_COIL_B_NEGATIVE;
-	_delay_ms(STEP_DELAY_MS/2);
+	_delay_ms(STEP_DELAY_MS);
 	
 }
 
-void bipolar_drive_forward_half_step()
+void bipolar_forward_half_step_drive_forward()
 {
 	unsigned int STEP_DELAY_MS = 10;
 	
-	RESET_COIL_A_POSITIVE;
-	RESET_COIL_A_NEGATIVE;
-	RESET_COIL_B_POSITIVE;
-	SET_COIL_B_NEGATIVE;
-	_delay_ms(STEP_DELAY_MS);
-	
 	SET_COIL_A_POSITIVE;
 	RESET_COIL_A_NEGATIVE;
 	RESET_COIL_B_POSITIVE;
@@ -111,26 +174,8 @@ void bipolar_drive_forward_half_step()
 	RESET_COIL_B_POSITIVE;
 	RESET_COIL_B_NEGATIVE;
 	_delay_ms(STEP_DELAY_MS);
-
+	
 	SET_COIL_A_POSITIVE;
-	SET_COIL_A_NEGATIVE;
-	RESET_COIL_B_POSITIVE;
-	RESET_COIL_B_NEGATIVE;
-	_delay_ms(STEP_DELAY_MS);
-	
-	RESET_COIL_A_POSITIVE;
-	SET_COIL_A_NEGATIVE;
-	RESET_COIL_B_POSITIVE;
-	RESET_COIL_B_NEGATIVE;
-	_delay_ms(STEP_DELAY_MS);
-	
-	RESET_COIL_A_POSITIVE;
-	SET_COIL_A_NEGATIVE;
-	SET_COIL_B_POSITIVE;
-	RESET_COIL_B_NEGATIVE;
-	_delay_ms(STEP_DELAY_MS);
-	
-	RESET_COIL_A_POSITIVE;
 	RESET_COIL_A_NEGATIVE;
 	SET_COIL_B_POSITIVE;
 	RESET_COIL_B_NEGATIVE;
@@ -139,6 +184,30 @@ void bipolar_drive_forward_half_step()
 	RESET_COIL_A_POSITIVE;
 	RESET_COIL_A_NEGATIVE;
 	SET_COIL_B_POSITIVE;
+	RESET_COIL_B_NEGATIVE;
+	_delay_ms(STEP_DELAY_MS);
+	
+	RESET_COIL_A_POSITIVE;
+	SET_COIL_A_NEGATIVE;
+	SET_COIL_B_POSITIVE;
+	RESET_COIL_B_NEGATIVE;
+	_delay_ms(STEP_DELAY_MS);
+	
+	RESET_COIL_A_POSITIVE;
+	SET_COIL_A_NEGATIVE;
+	RESET_COIL_B_POSITIVE;
+	RESET_COIL_B_NEGATIVE;
+	_delay_ms(STEP_DELAY_MS);
+	
+	RESET_COIL_A_POSITIVE;
+	SET_COIL_A_NEGATIVE;
+	RESET_COIL_B_POSITIVE;
+	SET_COIL_B_NEGATIVE;
+	_delay_ms(STEP_DELAY_MS);
+
+	RESET_COIL_A_POSITIVE;
+	RESET_COIL_A_NEGATIVE;
+	RESET_COIL_B_POSITIVE;
 	SET_COIL_B_NEGATIVE;
 	_delay_ms(STEP_DELAY_MS);
 	

@@ -11,6 +11,17 @@
 #define FALSE 0
 #define TRUE 1
 
+#define CLOCKWISE 1
+#define COUNTER_CLOCKWISE 0
+
+#define STEP_DEGREES 18
+
+#define BIPOLAR_STEP_1        1
+#define BIPOLAR_STEP_2        2
+#define BIPOLAR_STEP_3        3
+#define BIPOLAR_STEP_4        4
+#define BIPOLAR_STEP_NULL     0
+
 struct boolean_struct
 {
 	unsigned int BOOL_0 : 1;
@@ -35,6 +46,10 @@ typedef unsigned long uint32;
 
 /* Exported Variables */
 /*============================================================================*/
+uint16 ANGLE;
+uint16 DESIRED_ANGLE;
+sint16 ROTATIONS;
+uint8  LAST_STEP;
 
 #endif /* GLOBAL_H_ */ 
 

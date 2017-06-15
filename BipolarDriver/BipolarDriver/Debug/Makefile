@@ -40,6 +40,7 @@ C_SRCS +=  \
 ../IPX_BipolarDriver.c \
 ../IPX_Interrupt.c \
 ../IPX_LCD_Display.c \
+../IPX_UART.c \
 ../main.c
 
 
@@ -53,24 +54,28 @@ OBJS +=  \
 IPX_BipolarDriver.o \
 IPX_Interrupt.o \
 IPX_LCD_Display.o \
+IPX_UART.o \
 main.o
 
 OBJS_AS_ARGS +=  \
 IPX_BipolarDriver.o \
 IPX_Interrupt.o \
 IPX_LCD_Display.o \
+IPX_UART.o \
 main.o
 
 C_DEPS +=  \
 IPX_BipolarDriver.d \
 IPX_Interrupt.d \
 IPX_LCD_Display.d \
+IPX_UART.d \
 main.d
 
 C_DEPS_AS_ARGS +=  \
 IPX_BipolarDriver.d \
 IPX_Interrupt.d \
 IPX_LCD_Display.d \
+IPX_UART.d \
 main.d
 
 OUTPUT_FILE_PATH +=BipolarDriver.elf
@@ -87,6 +92,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

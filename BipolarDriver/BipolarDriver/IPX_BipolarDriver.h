@@ -36,9 +36,12 @@
 #define MOTOR_OFF MOTOR_PORT &= ~((1 << MOTOR_COIL_A_POSITIVE) | (1 << MOTOR_COIL_A_NEGATIVE) | (1 << MOTOR_COIL_B_POSITIVE) | (1 << MOTOR_COIL_B_NEGATIVE))
 
 void init_bipolar_control(void);
-void bipolar_drive_forward();
-void bipolar_drive_forward_full_torque();
-void bipolar_drive_forward_full_step();
-void bipolar_drive_forward_half_step();
+void bipolar_wave_drive_forward();
+void bipolar_high_torque_full_step_drive_forward();
+void bipolar_forward_half_step_drive_forward();
+void set_angle(uint16 degrees, uint8 direction);
+void bipolar_wave_drive_forward_one_step();
+void bipolar_wave_drive_backward_one_step();
+void spin_to_angle();
 
 #endif /* IPX_BIPOLARDRIVER_H_ */

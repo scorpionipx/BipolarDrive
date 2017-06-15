@@ -10,6 +10,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <stdlib.h>
 #include "IPX_LCD_Display.h"
 #include "IPX_BipolarDriver.h"
 
@@ -36,7 +37,38 @@ void init_interrupt_200ms()
 	TIMSK |= (1 << OCIE1A);
 }
 
+volatile int xcounter = 1;
+
 // 200ms ISR
 ISR (TIMER1_COMPA_vect)
 {
+/*	put_Char_LCD_Display(0xC0, 0);
+	put_Char_LCD_Display((ANGLE/1000)%10 + 48, 1);
+	put_Char_LCD_Display((ANGLE/100)%10 + 48, 1);
+	put_Char_LCD_Display((ANGLE/10)%10 + 48, 1);
+	put_Char_LCD_Display('.', 1);
+	put_Char_LCD_Display(ANGLE%10 + 48, 1);
+	
+	put_Char_LCD_Display(' ', 1);
+	
+	put_Char_LCD_Display((DESIRED_ANGLE/1000)%10 + 48, 1);
+	put_Char_LCD_Display((DESIRED_ANGLE/100)%10 + 48, 1);
+	put_Char_LCD_Display((DESIRED_ANGLE/10)%10 + 48, 1);
+	put_Char_LCD_Display('.', 1);
+	put_Char_LCD_Display(DESIRED_ANGLE%10 + 48, 1);
+	
+	put_Char_LCD_Display(' ', 1);*/
+	if((abs(ANGLE - DESIRED_ANGLE)) > (STEP_DEGREES / 2))
+	{
+		//put_Char_LCD_Display('Y', 1);
+	}
+	else
+	{
+		//put_Char_LCD_Display('N', 1);
+		MOTOR_OFF;
+	}
+	
+	/*put_Char_LCD_Display((abs(ANGLE - DESIRED_ANGLE)/1000)%10 + 48, 1);
+	put_Char_LCD_Display((abs(ANGLE - DESIRED_ANGLE)/100)%10 + 48, 1);
+	put_Char_LCD_Display((abs(ANGLE - DESIRED_ANGLE)/10)%10 + 48, 1);*/
 }
